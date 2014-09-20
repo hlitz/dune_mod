@@ -44,6 +44,7 @@ struct Gatedesc {
 };
 
 struct Trapframe_aux {
+  int dummy;
 };
 
 struct Trapframe {
