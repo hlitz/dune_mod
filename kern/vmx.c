@@ -832,7 +832,7 @@ static void vmx_setup_initial_guest_state(struct dune_config *conf)
 	vmcs_write32(GUEST_FS_LIMIT, 0xFFFFFFFF);
 	vmcs_write32(GUEST_GS_LIMIT, 0xFFFFFFFF);
 	vmcs_write32(GUEST_SS_LIMIT, 0xFFFFFFFF);
-
+	
 	/* configure segment selectors */
 	vmcs_write16(GUEST_CS_SELECTOR, 0);
 	vmcs_write16(GUEST_DS_SELECTOR, 0);

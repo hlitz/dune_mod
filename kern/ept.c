@@ -410,6 +410,7 @@ static int ept_set_epte(struct vmx_vcpu *vcpu, int make_write,
 	epte_t *epte, flags;
 	struct page *page;
 	unsigned huge_shift;
+	unsigned long tmp;
 	int level;
 
 	ret = get_user_pages_fast(hva, 1, make_write, &page);
@@ -420,7 +421,8 @@ static int ept_set_epte(struct vmx_vcpu *vcpu, int make_write,
 		return ret;
 	}
 
-	spin_lock(&vcpu->ept_lock);
+	//	spin_lock(&vcpu->ept_lock);
+	spin_lock_irqsave(&vcpu->ept_lock, tmp);
 
 	huge_shift = compound_order(compound_head(page)) + PAGE_SHIFT;
 	level = 0;
@@ -432,8 +434,9 @@ static int ept_set_epte(struct vmx_vcpu *vcpu, int make_write,
 	ret = ept_lookup_gpa(vcpu, (void *) gpa,
 			     level, 1, &epte);
 	if (ret) {
-		spin_unlock(&vcpu->ept_lock);
-		put_page(page);
+	        //spin_unlock(&vcpu->ept_lock);
+	        spin_unlock_irqrestore(&vcpu->ept_lock, tmp);
+	        put_page(page);
 		printk(KERN_ERR "ept: failed to lookup EPT entry\n");
 		return ret;
 	}
@@ -469,7 +472,8 @@ static int ept_set_epte(struct vmx_vcpu *vcpu, int make_write,
 
 	*epte = epte_addr(page_to_phys(page)) | flags;
 
-	spin_unlock(&vcpu->ept_lock);
+	//spin_unlock(&vcpu->ept_lock);
+	spin_unlock_irqrestore(&vcpu->ept_lock, tmp);
 
 	return 0;
 }

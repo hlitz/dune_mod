@@ -359,9 +359,9 @@ __dune_intr_with_num:
 	movq	%rax, %rdi
 
 	/* then restore the CPL0 FS base address */
-	testq	$3, CS(%rsp)
-	jz	__dune_intr_handler
-	SET_G0_FS_BASE
+/*	testq	$3, CS(%rsp)*/
+/*	jz	__dune_intr_handler*/
+/*	SET_G0_FS_BASE*/
 
 __dune_intr_handler:
 	/* setup arguments and call the handler */
@@ -369,14 +369,24 @@ __dune_intr_handler:
 	call	dune_trap_handler
 
 	/* next restore the CPL3 FS base address */
-	testq	$3, CS(%rsp)
-	jz	__dune_intr_done
-	SET_G3_FS_BASE
-
+/*	testq	$3, CS(%rsp)*/
+/*	jz	__dune_intr_done*/
+/*	SET_G3_FS_BASE*/
 __dune_intr_done:
+	movq    RIP(%rsp), %rax
+	movq    RSP(%rsp), %rcx
+	movq    %rax, -8(%rcx)
+	movq    RFLAGS(%rsp), %rcx
+	pushq   %rcx
+	popfq
+
 	/* load only destructable registers */
 	RESTORE_REGS
 
 	/* jump to the frame */
-	addq	$EF_START, %rsp
-	iretq
+	/*addq	$EF_START, %rsp*/
+	/*iretq*/
+	movq    RSP(%rsp), %rsp
+	subq    $8, %rsp
+	retq
+	

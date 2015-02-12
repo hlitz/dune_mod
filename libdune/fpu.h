@@ -1,3 +1,5 @@
+#ifndef DUNE_FPU
+#define DUNE_FPU
 /*
  * fpu.h - x86 floating point, MMX, SSE, and AVX support for Dune
  */
@@ -115,3 +117,4 @@ static inline void dune_fpu_save_safe(struct fpu_area *fp)
 {
 	fpu_xsave(fp, -1);
 }
+#endif
