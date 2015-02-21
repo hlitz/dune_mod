@@ -375,7 +375,9 @@ __dune_intr_handler:
 __dune_intr_done:
 	movq    RIP(%rsp), %rax
 	movq    RSP(%rsp), %rcx
-	movq    %rax, -8(%rcx)
+	subq    $8, %rcx
+	movq    %rax, (%rcx)
+	movq    %rcx, RSP(%rsp)
 	movq    RFLAGS(%rsp), %rcx
 	pushq   %rcx
 	popfq
@@ -387,6 +389,6 @@ __dune_intr_done:
 	/*addq	$EF_START, %rsp*/
 	/*iretq*/
 	movq    RSP(%rsp), %rsp
-	subq    $8, %rsp
+	/*subq    $8, %rsp*/
 	retq
 	
